@@ -1,0 +1,47 @@
+- name: Create VM from template or clone VM
+  #vCenterのmoduleを使うので、hostsはlocalhost指定で
+  hosts: localhost
+  vars_files:
+    - create_vm_vars.yml
+  tasks:
+    - name: Provide info about vCenter
+      vmware_about_info:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: false
+      register: vcenter_info
+
+    - name: print info about vcenter
+      debug:
+        var: vcenter_info
+
+    - name: Create VM from template
+      loop: "{{ vm_conf }}"
+      vmware_guest:
+        validate_certs: false
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        datacenter: "{{ datacenter_name }}"
+        cluster: "{{ cluster_name }}"
+        # templateはVMからでもいける＝cloneとなる？
+        template: "{{ template_name }}"
+        folder: "/{{ datacenter_name }}/vm/"
+
+        name: "{{ item.name }}"
+        state: "{{ item.state }}"
+        networks:
+          - name: "{{ item.networks.name }}"
+            connected: yes
+            start_connected: yes
+
+        customization:
+          hostname: "{{ item.name }}"
+      register: vm_info
+    
+    - name: Print vm_info
+      debug:
+        var: vm_info
+        
+        

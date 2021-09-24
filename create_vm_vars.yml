@@ -1,0 +1,19 @@
+#ansibleのeslintによりエラーが出ることがあるが無視でOK
+
+vcenter_hostname: 172.20.12.1
+vcenter_username: administrator@manta.tokyo
+vcenter_password: C!scoI23
+datacenter_name: manta-chiba
+cluster_name: manta-chiba-hx-cluster
+template_name: ansible_temp
+
+# vm_confを配列にして、loopさせる
+vm_conf:
+  - name: ansible_test_VM
+    state: poweredon
+    networks:
+      name: DPortGroup
+  - name: ansible_test_VM_2
+    state: poweredon
+    networks:
+      name: TRUNK_TEST

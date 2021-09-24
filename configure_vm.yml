@@ -1,0 +1,8 @@
+- name: Configure VM
+  hosts: VM
+  tasks:
+    - name: install Docker
+      apt:
+        - name: vim
+          state: installed
+    - name:
